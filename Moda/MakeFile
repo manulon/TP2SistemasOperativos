@@ -1,0 +1,9 @@
+LOADLIBES=-pthread #-lrt
+CXXFLAGS=-std=c++11
+
+todos= #todos los archivos
+
+all: ${todos}
+
+clean:
+	rm -f ${todos} *~ 
