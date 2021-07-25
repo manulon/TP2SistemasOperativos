@@ -1,37 +1,44 @@
 #include <iostream>
 #include "../Sem-sv/sv_shm.h"
 #include "../Sem-sv/sv_sem.h"
-/* Basado en el ejemplo del barbero */
+#include "../utils/utils.h"
 
 using namespace std;
 
 int main(int argc, char *argv[]) {
-	int* sillas_disponibles;
+	printNames();
 
+	sv_sem mutex("Mutex", 1);
+	sv_sem mesa("Mesa", 0);
+	sv_sem influencer ("Influencer", 0);
+	sv_sem salida ("Salida", 0);
+
+	mesa_status_t* mesa_status;
 	sv_shm sillas_shm("Sillas");
-	sillas_disponibles=static_cast<int *>(sillas_shm.map(sizeof(int)));
+	mesa_status = reinterpret_cast<mesa_status_t*>(sillas_shm.map(sizeof(mesa_status_t)));
+	mesa_status->sillas_disponibles = INFLUENCERS_MESA;
+	mesa_status->influencer_espera = 0;
 
-	sv_sem mutex("Mutex",1);
-	sv_sem mesa("Mesa",0);
-	sv_sem influencer ("Influencer",0);
-	sv_sem salida ("Salida",0);
-	
-	std::cout<<"Las sillas disponibles son "<<*sillas_disponibles<<std::endl;
+	std::cout<<"Las sillas disponibles son "<<mesa_status->sillas_disponibles<<std::endl;
+	string coordinador {""};
 
-	while ( *sillas_disponibles != 0 ){
-		cout<<"Mesa lista para ser ocupada..."<<endl;;
+	while (coordinador != "f") {
+		cout<<"Mesa lista para ser ocupada..."<<endl;
+		cout <<"Hay "<< mesa_status->sillas_disponibles <<" sillas disponibles."<<endl;
 		influencer.wait();
-		cout<<"Hay "<<(*sillas_disponibles)<<" sillas disponibles."<<endl;
+		cout << "Sentando a influencer... (String para seguir o f para terminar)" << endl;
+		cin >> coordinador;
 		mutex.wait();
+		mesa_status->influencer_espera -= 1;
 		mesa.post();
 		mutex.post();
-		cout<<" Se ocupo una silla ahora hay "<<4-(*sillas_disponibles)<<" influencers"<<endl;
-		cout<<"--------------------------------------"<<endl;
 		salida.post();
+		cout << "Se ocupo una silla ahora hay "<< INFLUENCERS_MESA - mesa_status->sillas_disponibles << " influencers sentados" <<endl;
 	}
 	
-	sillas_shm.del();
+	mutex.del();
 	mesa.del();
 	influencer.del();
 	salida.del();
+	sillas_shm.del();
 }
