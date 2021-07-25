@@ -28,6 +28,7 @@ Para liberar los recursos utilizados se debera llamar al programa **terminador**
 [ ] **PROBAR** nuevamente el funcionamiento de todo (ya lo probe yo, pero por las dudas **PRUEBENLO**)  
 [ ] Crear un nuevo programa **finalizador** que se encargue de terminar al coordinador, ya que va a estar  
 siempre esperando a que ingrese un influencer.  
+[ ] Cuando crean que este bien y sea lo que se va a entregar, cambiar el nombre de la carpeta **Moda_Final** por **Moda** y eliminar lo demas.  
 
 ## NOTAS para cuando prueben ##
 El coordinador aceptará influencers siempre y cuando cumplan con las condiciones del enunciado. En el caso de encontrarse
