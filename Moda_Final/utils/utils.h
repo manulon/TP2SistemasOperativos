@@ -36,6 +36,11 @@ void show_mesa(mesa_status_t& mesa) {
               << std::endl;
 }
 
+bool is_table_valid(int g, int s) {
+	return !(g > 0                && s > MAX_SAME_SILLAS  ||
+		     g > MAX_SAME_SILLAS  && s > 0);
+}
+
 void print_names() {
     std::cout<<"Grupo 4"<<std::endl<<std::endl;
     std::cout<<"102425 LONGO ELIA CATALAN, MANUEL"<<std::endl;

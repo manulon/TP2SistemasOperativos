@@ -15,20 +15,17 @@ int main(int argc, const char *argv[]) {
 	mesa_status = reinterpret_cast<mesa_status_t*>(mesa.map(sizeof(mesa_status_t)));
 
 	mutex.wait();
-	if (mesa_status->grungers_sentados <= MAX_SAME_SILLAS) {
+	if (is_table_valid(mesa_status->grungers_sentados,
+					   mesa_status->swaggers_sentados + 1))
 		std::cout << "Swagger esperando a sentarse..." << std::endl;
-		++(mesa_status->swaggers_esperando);
-		influencer.post();
-		mutex.post();	
-		swagger.wait();
-		std::cout << "Swagger sentado" << std::endl;
-	} else {
-		std::cout << "Mesa ocupada el swagger no se puede sentar, esperando lugar..." << std::endl;
-		++(mesa_status->swaggers_esperando);
-		influencer.post();
-		mutex.post();
-		swagger.wait();
-		std::cout << "Swagger sentado" << std::endl;
-	}
+	else
+		std::cout << "Mesa ocupada el swagger no se puede sentar, " 
+				  << "esperando lugar..." << std::endl;
+
+	++(mesa_status->swaggers_esperando);
+	influencer.post();
+	mutex.post();
+	swagger.wait();
+	std::cout << "Swagger sentado" << std::endl;
 	return 0;
 }

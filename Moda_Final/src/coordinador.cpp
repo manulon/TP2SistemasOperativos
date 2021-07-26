@@ -3,10 +3,42 @@
 #include "../utils/utils.h"
 #include <iostream>
 
-bool is_between(int val, int min, int max) {
-	return min < val && val <= max;
+bool should_wait_for_influencer(mesa_status_t& mesa_status) {
+	bool is_there_someone_waiting = mesa_status.swaggers_esperando > 0 ||
+								    mesa_status.grungers_esperando > 0;
+
+	bool is_grunger_trying_join = mesa_status.grungers_esperando > 0;
+	bool can_grunger_join = is_table_valid(mesa_status.grungers_sentados + 1, 
+										   mesa_status.swaggers_sentados);
+
+	bool is_swagger_trying_join = mesa_status.swaggers_esperando > 0;
+
+	bool can_swagger_join = is_table_valid(mesa_status.grungers_sentados, 
+										   mesa_status.swaggers_sentados + 1);
+
+	return !is_there_someone_waiting ||
+     		is_grunger_trying_join && !can_grunger_join ||
+	     	is_swagger_trying_join && !can_swagger_join;
 }
 
+void restart_mesa(mesa_status_t& mesa_status) {
+	mesa_status.sillas_disponibles = MAX_SILLAS;
+	mesa_status.swaggers_sentados = 0;
+	mesa_status.grungers_sentados = 0;
+}
+
+void update_counters(mesa_status_t& mesa_status, int& waiting, int& seated, 
+					 sv_sem& semaphore) {
+	for (int i = 0; i < waiting; i++) {
+		--(waiting);
+		++(seated);
+
+		--(mesa_status.sillas_disponibles);
+		semaphore.post();
+		if (mesa_status.sillas_disponibles == 0)
+			restart_mesa(mesa_status);
+	}
+}
 
 int main(int argc, const char *argv[]) {
 	print_names();
@@ -24,47 +56,24 @@ int main(int argc, const char *argv[]) {
 		std::cout << "Esperando por la llegada de un influencer" << std::endl;
 		show_mesa(*mesa_status);
 
-		if (mesa_status->swaggers_esperando == 0 && 
-			mesa_status->grungers_esperando == 0) {
+		if (should_wait_for_influencer(*mesa_status)) 
 			influencer.wait();
-		} else if (mesa_status->grungers_esperando > 0 && 
-				   mesa_status->swaggers_sentados > MAX_SAME_SILLAS) {
-			influencer.wait();
-		} else if (mesa_status->swaggers_esperando > 0 && 
-				   mesa_status->grungers_sentados > MAX_SAME_SILLAS) {
-			influencer.wait();
-		}
-		
+
 		mutex.wait();
 
 		if (mesa_status->grungers_esperando > 0 && 
-		    mesa_status->swaggers_sentados <= MAX_SAME_SILLAS) {
-			for (int i = 0; i < mesa_status->grungers_esperando; i++) {
-				
-				--(mesa_status->grungers_esperando);
-				++(mesa_status->grungers_sentados);
-				--(mesa_status->sillas_disponibles);
-				grunger.post();
-				if (mesa_status->sillas_disponibles == 0) {
-					mesa_status->sillas_disponibles = MAX_SILLAS;
-					mesa_status->swaggers_sentados = 0;
-					mesa_status->grungers_sentados = 0;
-				}
-			}
+		    is_table_valid(mesa_status->grungers_sentados + 1, 
+						   mesa_status->swaggers_sentados)) {
+
+			update_counters(*mesa_status, mesa_status->grungers_esperando, 
+							mesa_status->grungers_sentados, grunger);
 
 		} else if (mesa_status->swaggers_esperando > 0 && 
-				   mesa_status->grungers_sentados <= MAX_SAME_SILLAS) {	
-			for (int i = 0; i < mesa_status->swaggers_esperando; i++) {
-				--(mesa_status->swaggers_esperando);
-				++(mesa_status->swaggers_sentados);
-				--(mesa_status->sillas_disponibles);
-				swagger.post();
-				if (mesa_status->sillas_disponibles == 0) {
-					mesa_status->sillas_disponibles = MAX_SILLAS;
-					mesa_status->swaggers_sentados = 0;
-					mesa_status->grungers_sentados = 0;
-				}
-			}
+				  is_table_valid(mesa_status->grungers_sentados, 
+				                 mesa_status->swaggers_sentados + 1)) {
+
+			update_counters(*mesa_status, mesa_status->swaggers_esperando, 
+							mesa_status->swaggers_sentados, swagger);
 		}
 		mutex.post();
 	}
