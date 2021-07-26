@@ -6,11 +6,11 @@
 int main(int argc, const char *argv[]) {
 	print_names();
 
-	sv_sem mutex {"Mutex"};
-	sv_sem influencer {"Influencer"};
-	sv_sem grunger {"Grunger"};
-	sv_sem swagger {"Swagger"};
-	sv_shm mesa {"Mesa"};
+	sv_sem mutex {MUTEX_ID};
+	sv_sem influencer {INFLUENCER_ID};
+	sv_sem grunger {GRUNGER_ID};
+	sv_sem swagger {SWAGGER_ID};
+	sv_shm mesa {MESA_ID};
 
 	std::cout << "Liberando semaforos..." << std::endl;	
 	mesa.del();

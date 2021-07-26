@@ -6,16 +6,16 @@
 int main(int argc, const char *argv[]) {
 	print_names();
 
-	sv_sem mutex {"Mutex"};
-	sv_sem influencer {"Influencer"};
-	sv_sem swagger {"Swagger"};
+	sv_sem mutex {MUTEX_ID};
+	sv_sem influencer {INFLUENCER_ID};
+	sv_sem swagger {SWAGGER_ID};
 	
-	sv_shm mesa {"Mesa"};
+	sv_shm mesa {MESA_ID};
 	mesa_status_t *mesa_status;
 	mesa_status = reinterpret_cast<mesa_status_t*>(mesa.map(sizeof(mesa_status_t)));
 
 	mutex.wait();
-	if (mesa_status->grungers_sentados <= 2) {
+	if (mesa_status->grungers_sentados <= MAX_SAME_SILLAS) {
 		std::cout << "Swagger esperando a sentarse..." << std::endl;
 		++(mesa_status->swaggers_esperando);
 		influencer.post();

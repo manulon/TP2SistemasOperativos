@@ -3,6 +3,17 @@
 
 #include <iostream>
 #define MAX_SILLAS 4
+#define MAX_SAME_SILLAS 2
+#define EMPTY_SEAT '.'
+#define GRUNGE_SEAT 'G'
+#define SWAGGER_SEAT 'S'
+
+#define MUTEX_ID "Mutex"
+#define INFLUENCER_ID "Influencer"
+#define SWAGGER_ID "Swagger"
+#define GRUNGER_ID "Grunger"
+#define MESA_ID "Mesa"
+
 
 struct mesa_status_t {
 	int sillas_disponibles;
@@ -12,6 +23,19 @@ struct mesa_status_t {
 	int grungers_sentados;
 };
 
+void show_mesa(mesa_status_t& mesa) {
+    std::cout << "\tMesa: " 
+              << std::string(mesa.grungers_sentados, GRUNGE_SEAT) 
+              << std::string(mesa.swaggers_sentados, SWAGGER_SEAT) 
+              << std::string(mesa.sillas_disponibles, EMPTY_SEAT) 
+              << std::endl;
+
+    std::cout << "\tEsperando: " 
+              << std::string(mesa.grungers_esperando, GRUNGE_SEAT) 
+              << std::string(mesa.swaggers_esperando, SWAGGER_SEAT) 
+              << std::endl;
+}
+
 void print_names() {
     std::cout<<"Grupo 4"<<std::endl<<std::endl;
     std::cout<<"102425 LONGO ELIA CATALAN, MANUEL"<<std::endl;
@@ -20,5 +44,6 @@ void print_names() {
     std::cout<<"104112 BURMAN, FEDERICO "<<std::endl<<std::endl;
 }
 
-#endif //_UTILS_H_
 
+
+#endif //_UTILS_H_
