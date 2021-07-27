@@ -1,7 +1,7 @@
 LOADLIBES=-pthread #-lrt
 CXXFLAGS=-std=c++11
 
-todos=influencer terminador  mesa
+todos=inicializador terminador coordinador swagger grunger
 
 all: ${todos}
 

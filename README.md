@@ -22,18 +22,3 @@
 Para liberar los recursos utilizados se debera llamar al programa **terminador**.  
 
 ---
-## DE ACA PARA ABAJO, TODO ES PARA ELIMINAR. ARRIBA TODO LO QUE VAYAMOS A DEJAR FIJO ##
-## Lista cosas posibles por hacer ##  
-[ ] Ingresar varios prints para ver mejor la ejecucion de los programas (Los que se les ocurran).  
-[ ] **PROBAR** nuevamente el funcionamiento de todo (ya lo probe yo, pero por las dudas **PRUEBENLO**)  
-[ ] Crear un nuevo programa **finalizador** que se encargue de terminar al coordinador, ya que va a estar  
-siempre esperando a que ingrese un influencer.  
-[ ] Cuando crean que este bien y sea lo que se va a entregar, cambiar el nombre de la carpeta **Moda_Final** por **Moda** y eliminar lo demas.  
-
-## NOTAS para cuando prueben ##
-El coordinador aceptará influencers siempre y cuando cumplan con las condiciones del enunciado. En el caso de encontrarse
-en una situacion de 3 grunges y un swagger que se intenta sentar (o viceversa) el swagger que esta intentando sentarse se quedara esperando
-hasta que ingrese un nuevo grunge que pueda ocupar ese espacio en la mesa, hasta que no ingrese un grunge que la complete cualquier intento de sentar
-un nuevo swagger no sera posible (todos se quedaran esperando hasta que el coordinador los deje entrar). Cuando ingrese el influencer del grupo faltante, automaticamente todos los influencers del grupo contrario (en el cacso del ejemplo los grungers) que intentaron entrar antes van a entrar de golpe porque
-es como si quedaran todos encolados hasta que finalmente ingreso el influencer que le hacia falta a la mesa que no estaba completa.
-
